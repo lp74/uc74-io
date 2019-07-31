@@ -25,6 +25,7 @@
     }
 
     .btn {
+        border: 1px solid #202020;
         padding: 24px;
         font-size: 24px;
         -webkit-appearance: none;
@@ -44,6 +45,7 @@
         outline: none;
     }
     .btn:disabled {
+        border: none;
         background: #d2d2d2;
     }
     .msg {
@@ -65,11 +67,10 @@
     btn.addEventListener('click', async () => {
         fetch('/v1/gate/open')
             .then( async (res) => {
-                msg.innerHTML = await res.json();
+                msg.innerHTML = (await res.json()).message;
             })
             .catch((err) => {
-                msg.innerHTML = 'error';
-                console.error(err);
+                msg.innerHTML = err;
             });
         btn.setAttribute('disabled', 'disabled');
         if (id) {

@@ -6,7 +6,9 @@ const app = express()
 const port = 3001
 
 let out18 = {
-    writeSync: () => {throw('no gpio')}
+    writeSync: () => {
+        throw('no gpio')
+    }
 }
 
 try {
@@ -29,9 +31,9 @@ app.use('/', express.static(path.join(__dirname, 'www')));
 app.get('/v1/gate/open', (req, res) => {
     try{
         const result = open(2000);
-        res.status(200).send('ok')
+        res.status(200).send({message: 'ok'})
     }catch(err){
-        res.status(503).send('retry later');
+        res.status(503).send({message: 'retry later'});
     }
 })
 
