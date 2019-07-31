@@ -8,6 +8,10 @@
     <title>Gate</title>
 </head>
 <style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #202020;
+    }
     .container {
         position: absolute;
         top: 0;
@@ -15,31 +19,69 @@
         left: 0;
         bottom: 0;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
     }
+
     .btn {
         padding: 24px;
         font-size: 24px;
         -webkit-appearance: none;
         -moz-appearance: none;
     }
-    .btn:hover{
+
+    .btn:hover {
         background: #f2f2f2;
     }
-    .btn:active{
+
+    .btn:active {
         outline: none;
         background: #d2d2d2;
     }
-    .btn:focus{
+
+    .btn:focus {
         outline: none;
+    }
+    .btn:disabled {
+        background: #d2d2d2;
+    }
+    .msg {
+        margin-bottom: 32px
     }
 </style>
 
 <body>
     <div class="container">
-        <button class="btn">O P E N</button>
+        <div class="msg" id="gateMsg">&nbsp;</div>
+        <button class="btn" id="gateBtn">O P E N</button>
     </div>
 </body>
+<script>
+    const DEBOUCE = 2500;
+    const btn = document.querySelector('#gateBtn');
+    const msg = document.querySelector('#gateMsg');
+    let id = null;
+    btn.addEventListener('click', async () => {
+        fetch('/v1/gate/open')
+            .then( async (res) => {
+                msg.innerHTML = await res.json();
+            })
+            .catch((err) => {
+                msg.innerHTML = 'error';
+                console.error(err);
+            });
+        btn.setAttribute('disabled', 'disabled');
+        if (id) {
+            console.log('wait');
+        } else {
+            id = setTimeout(() => {
+                btn.removeAttribute('disabled');
+                msg.innerHTML = '&nbsp;';
+                id = null;
+            }, DEBOUCE);
+        }
+    });
+</script>
 
 </html>
