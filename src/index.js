@@ -36,7 +36,7 @@ app.get('/v1/gate/open', (req, res) => {
     }
 
     try {
-        const fswebcam = spawn('fswebcam', ['-r', '640x360', '--no-banner', '/home/pi/uc74-io/src/www/image.jpg']);
+        const fswebcam = spawn('fswebcam', ['-r', '640x360', '-S', '5', '--no-banner', '/home/pi/uc74-io/src/www/image.jpg']);
         fswebcam.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
         });
