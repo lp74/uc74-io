@@ -8,7 +8,6 @@ const helmet = require('helmet');
 
 const gpio = require('onoff').Gpio;
 const app = express();
-const port = 3001;
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -86,19 +85,3 @@ var certificate = fs.readFileSync(process.env.SERVER_CRT);
 var credentials = { key: privateKey, cert: certificate };
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(process.env.HTTPS_PORT);
-
-// const spdy = require('spdy');
-// const options = {
-//     key: fs.readFileSync(__dirname + '/server.key'),
-//     cert: fs.readFileSync(__dirname + '/server.crt')
-// }
-// spdy
-//     .createServer(options, app)
-//     .listen(port, (error) => {
-//         if (error) {
-//             console.error(error)
-//             return process.exit(1)
-//         } else {
-//             console.log('Listening on port: ' + port + '.')
-//         }
-//     })
