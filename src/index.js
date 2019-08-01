@@ -33,7 +33,7 @@ app.use(helmet.hidePoweredBy());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', express.static(path.join(__dirname, 'www')));
+app.use('/', express.static(path.join(__dirname, 'www'), { dotfiles: 'allow' }));
 
 app.get('/v1/gate/open', (req, res) => {
   try {
