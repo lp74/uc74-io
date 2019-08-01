@@ -1,0 +1,11 @@
+{
+  "python.pythonPath": "/Users/lucapolverini/miniconda3/envs/Orchestrator/bin/python",
+  "python.linting.pylintEnabled": false,
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": true,
+  "editor.tabSize": 2,
+	"editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "eslint.enable": true,
+  "eslint.autoFixOnSave": true
+}
