@@ -74,10 +74,6 @@ app.get('/v1/gate/open', (req, res) => {
   }
 });
 
-const http = require('http');
-var httpServer = http.createServer(app);
-httpServer.listen(process.env.HTTP_PORT);
-
 const https = require('https');
 var privateKey  = fs.readFileSync(process.env.SERVER_KEY);
 var certificate = fs.readFileSync(process.env.SERVER_CRT);
@@ -85,3 +81,10 @@ var certificate = fs.readFileSync(process.env.SERVER_CRT);
 var credentials = { key: privateKey, cert: certificate };
 var httpsServer = https.createServer(credentials, app);
 httpsServer.listen(process.env.HTTPS_PORT);
+
+const http = express();
+http.get('*', function (req, res) {
+  console.log(req.headers);
+  res.redirect('https://' + req.headers.host.replace(`:${process.env.HTTP_PORT}`, `:${process.env.HTTPS_PORT}`) + req.url);
+});
+http.listen(process.env.HTTP_PORT);
