@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs');
+
 const { spawn } = require('child_process');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -7,6 +9,8 @@ const helmet = require('helmet');
 const gpio = require('onoff').Gpio;
 const app = express();
 const port = 3001;
+const dotenv = require('dotenv');
+dotenv.config();
 
 let out18 = {
   writeSync: () => {
@@ -71,18 +75,17 @@ app.get('/v1/gate/open', (req, res) => {
   }
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
-
 const http = require('http');
 var httpServer = http.createServer(app);
-httpServer.listen(8080);
+httpServer.listen(process.env.HTTP_PORT);
 
-// const https = require('https');
-// var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
-// var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
-// var credentials = {key: privateKey, cert: certificate};
-// var httpsServer = https.createServer(credentials, app);
-// httpsServer.listen(8443);
+const https = require('https');
+var privateKey  = fs.readFileSync(process.env.SERVER_KEY);
+var certificate = fs.readFileSync(process.env.SERVER_CRT);
+
+var credentials = { key: privateKey, cert: certificate };
+var httpsServer = https.createServer(credentials, app);
+httpsServer.listen(process.env.HTTPS_PORT);
 
 // const spdy = require('spdy');
 // const options = {
