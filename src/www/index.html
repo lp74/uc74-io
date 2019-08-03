@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/uikit.min.css" />
     <title>Gate</title>
 </head>
 <style>
@@ -12,6 +13,7 @@
         font-family: Arial, Helvetica, sans-serif;
         color: #202020;
     }
+
     .container {
         position: absolute;
         top: 0;
@@ -44,29 +46,47 @@
     .btn:focus {
         outline: none;
     }
+
     .btn:disabled {
         border: none;
         background: #d2d2d2;
     }
+
     .msg {
         margin-bottom: 32px
     }
 </style>
-
 <body>
     <div class="container">
-        <div class="msg" id="gateMsg">&nbsp;</div>
-        <button class="btn" id="gateBtn">O P E N</button>
+            <div class="uk-margin">
+                    <div class="msg" id="gateMsg">&nbsp;</div>
+                    <button class="btn" id="gateBtn">O P E N</button>
+            </div>
+            <hr class="uk-divider-icon">
+        <section>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="email">email<input class="uk-input" type="text"
+                            id="email"></label>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="password">password<input class="uk-input" type="password"
+                            id="password"></label>
+                </div>
+                <div class="uk-margin">
+                    <button class="uk-button uk-button-primary" type="button" id="signBtn">sigin</button>
+                </div>
+        </section>
     </div>
 </body>
 <script>
     const DEBOUCE = 2500;
     const btn = document.querySelector('#gateBtn');
+    const signBtn = document.querySelector('#signBtn');
     const msg = document.querySelector('#gateMsg');
     let id = null;
     btn.addEventListener('click', async () => {
         fetch('/v1/gate/open')
-            .then( async (res) => {
+            .then(async (res) => {
                 msg.innerHTML = (await res.json()).message;
             })
             .catch((err) => {
@@ -82,6 +102,18 @@
                 id = null;
             }, DEBOUCE);
         }
+    });
+    signBtn.addEventListener('click', async () => {
+        fetch('v1/sign', {
+            method: 'post',
+            headers: {
+            'Content-Type': 'application/json'
+        },
+            body: JSON.stringify({
+                email: document.querySelector('#email').value,
+                password: document.querySelector('#password').value,
+            })
+        })
     });
 </script>
 

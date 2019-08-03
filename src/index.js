@@ -4,12 +4,15 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
 const gpio = require('onoff').Gpio;
 const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
+
+const { checkTocken, signToken } = require('./jwt');
 
 let out18 = {
   writeSync: () => {
@@ -35,10 +38,30 @@ app.use(helmet());
 app.use(helmet.hidePoweredBy());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cookieParser());
 app.use('/', express.static(path.join(__dirname, 'www'), { dotfiles: 'allow' }));
 
-app.get('/v1/gate/open', (req, res) => {
+app.use((req, res, next) => {
+  console.log(req.url);
+  console.log(req.params);
+  console.log(req.query);
+  console.log(req.body);
+  console.log(req.cookies);
+  next();
+});
+
+app.post('/v1/sign', (req, res, next) => {
+  const { email, password } = req.body;
+  if (process.env.JWT_EMAIL === email && process.env.JWT_PWD === password) {
+    const token = signToken(email);
+    res.cookie('token', token, { maxAge: process.env.JWT_EXP * 1000 });
+    res.end();
+  }
+  else {
+    res.status(401).send({ message: 'Unauthorized' });
+  }
+});
+app.get('/v1/gate/open', checkTocken, (req, res) => {
   try {
     const result = open(2000);
     res.status(200).send({ message: 'ok' });
