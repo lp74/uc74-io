@@ -11,6 +11,7 @@
 <style>
     body {
         font-family: Arial, Helvetica, sans-serif;
+        font-size: 12px;
         color: #202020;
     }
 
@@ -75,46 +76,13 @@
                 <div class="uk-margin">
                     <button class="uk-button uk-button-primary" type="button" id="signBtn">sigin</button>
                 </div>
+                <div class="uk-margin">
+                    <div class="msg" id="signMsg">&nbsp;</div>
+                </div>
         </section>
     </div>
 </body>
-<script>
-    const DEBOUCE = 2500;
-    const btn = document.querySelector('#gateBtn');
-    const signBtn = document.querySelector('#signBtn');
-    const msg = document.querySelector('#gateMsg');
-    let id = null;
-    btn.addEventListener('click', async () => {
-        fetch('/v1/gate/open')
-            .then(async (res) => {
-                msg.innerHTML = (await res.json()).message;
-            })
-            .catch((err) => {
-                msg.innerHTML = err;
-            });
-        btn.setAttribute('disabled', 'disabled');
-        if (id) {
-            console.log('wait');
-        } else {
-            id = setTimeout(() => {
-                btn.removeAttribute('disabled');
-                msg.innerHTML = '&nbsp;';
-                id = null;
-            }, DEBOUCE);
-        }
-    });
-    signBtn.addEventListener('click', async () => {
-        fetch('v1/sign', {
-            method: 'post',
-            headers: {
-            'Content-Type': 'application/json'
-        },
-            body: JSON.stringify({
-                email: document.querySelector('#email').value.toLowerCase().trim(),
-                password: document.querySelector('#password').value.trim()
-            })
-        }).then(response => {console.debug(response.status)})
-    });
+<script type="text/javascript" src="index.js">
 </script>
 
 </html>
