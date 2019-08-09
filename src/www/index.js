@@ -45,3 +45,27 @@ signBtn.addEventListener('click', async () => {
       console.error('error', err);
     });
 });
+
+function geoFindMe() {
+  var output = document.getElementById('out');
+
+  if (!navigator.geolocation) {
+    output.innerHTML = '<p>La geolocalizzazione non è supportata dal tuo browser</p>';
+    return;
+  }
+
+  function success(position) {
+    var latitude  = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    output.innerHTML = '<p>Latitudine: ' + latitude + '° <br>Longitudine: ' + longitude + '°</p>';
+  }
+
+  function error() {
+    output.innerHTML = 'Impossibile calcolare la tua posizione';
+  }
+
+  output.innerHTML = '<p>Locating…</p>';
+
+  navigator.geolocation.getCurrentPosition(success, error);
+}
+geoFindMe();
