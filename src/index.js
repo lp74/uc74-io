@@ -66,7 +66,7 @@ app.get('/v1/gate/shot', checkTocken, async (req, res) => {
   try {
     const code = await getShot();
     console.log(res);
-    res.status(200).send(code);
+    res.status(200).send(code.toString());
   } catch (error) {
     res.status(503).send(error);
   }
