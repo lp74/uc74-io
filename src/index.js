@@ -73,14 +73,13 @@ app.get('/v1/gate/shot', checkTocken, async (req, res) => {
 });
 
 app.get('/v1/gate/open', checkTocken, (req, res) => {
-  getShot();
-
   try {
     const result = open(2000);
     res.status(200).send({ message: 'ok' });
   } catch (err) {
     res.status(503).send({ message: 'retry later' });
   }
+  getShot().then(console.log).catch(console.error);
 });
 
 const https = require('https');
