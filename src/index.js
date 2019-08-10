@@ -65,8 +65,14 @@ app.post('/v1/sign', (req, res, next) => {
 app.get('/v1/gate/shot', checkTocken, async (req, res) => {
   try {
     const code = await getShot();
-    console.log(res);
-    res.status(200).send(code.toString());
+    switch (code) {
+    case 0:
+      res.status(200).sendFile('/home/pi/uc74-io/www/image.jpg');
+      break;
+    default:
+      res.status(200).send(code.toString());
+      break;
+    }
   } catch (error) {
     res.status(503).send(error);
   }
