@@ -46,6 +46,10 @@ signBtn.addEventListener('click', async () => {
     });
 });
 
+document.querySelector('#shotBtn').addEventListener('click', () => {
+  fetch('/v1/gate/shot');
+});
+
 function geoFindMe() {
   var output = document.getElementById('out');
 

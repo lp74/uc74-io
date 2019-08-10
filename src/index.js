@@ -1,12 +1,12 @@
 const path = require('path');
 const fs = require('fs');
 
-const { spawn } = require('child_process');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
+const getShot = require('./get-shot');
 const gpio = require('onoff').Gpio;
 const app = express();
 const dotenv = require('dotenv');
@@ -61,44 +61,30 @@ app.post('/v1/sign', (req, res, next) => {
     res.status(401).send({ message: 'Unauthorized' });
   }
 });
+
+app.get('/v1/gate/shot', checkTocken, async (req, res) => {
+  try {
+    const code = await getShot();
+    console.log(res);
+    res.status(200).send(code);
+  } catch (error) {
+    res.status(503).send(error);
+  }
+});
+
 app.get('/v1/gate/open', checkTocken, (req, res) => {
+  getShot();
+
   try {
     const result = open(2000);
     res.status(200).send({ message: 'ok' });
   } catch (err) {
     res.status(503).send({ message: 'retry later' });
   }
-
-  try {
-    const fswebcam = spawn('fswebcam', [
-      '--skip', '5',
-      '--no-banner',
-      '--jpeg', '50',
-      '--resolution', '960x540',
-      '--rotate', '90',
-      '--save', '/home/pi/uc74-io/src/www/image.jpg'
-    ]);
-    fswebcam.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    });
-    fswebcam.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`);
-    });
-
-    fswebcam.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-    });
-
-    fswebcam.on('error', (error) => {
-      console.log(error.code);
-    });
-  } catch (error) {
-    console.log(error);
-  }
 });
 
 const https = require('https');
-var privateKey  = fs.readFileSync(process.env.SERVER_KEY);
+var privateKey = fs.readFileSync(process.env.SERVER_KEY);
 var certificate = fs.readFileSync(process.env.SERVER_CRT);
 
 var credentials = { key: privateKey, cert: certificate };
@@ -111,3 +97,4 @@ http.get('*', function (req, res) {
   res.redirect('https://' + req.headers.host.replace(`:${process.env.HTTP_PORT}`, `:${process.env.HTTPS_PORT}`) + req.url);
 });
 http.listen(process.env.HTTP_PORT);
+
