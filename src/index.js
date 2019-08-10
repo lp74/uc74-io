@@ -67,7 +67,7 @@ app.get('/v1/gate/shot', checkTocken, async (req, res) => {
     const code = await getShot();
     switch (code) {
     case 0:
-      res.status(200).sendFile('/home/pi/uc74-io/www/image.jpg');
+      res.status(200).sendFile('/home/pi/uc74-io/src/www/image.jpg');
       break;
     default:
       res.status(200).send(code.toString());
