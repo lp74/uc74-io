@@ -1,3 +1,37 @@
+const UNKNOWN = 'unknown';
+class geoLocationManager {
+  constructor() {
+    this.coords = {
+      latitude: UNKNOWN,
+      longitude: UNKNOWN
+    };
+  }
+  locate() {
+    var output = document.getElementById('out');
+
+    if (!navigator.geolocation) {
+      output.innerHTML = '<p>La geolocalizzazione non è supportata dal tuo browser</p>';
+      return;
+    }
+
+    function success(position) {
+      this.coords = position.coords;
+      output.innerHTML = '<p>Latitudine: ' + this.coords.latitude + '° <br>Longitudine: ' + this.coords.longitude + '°</p>';
+    }
+
+    function error() {
+      output.innerHTML = 'Impossibile calcolare la tua posizione';
+    }
+
+    output.innerHTML = '<p>Locating…</p>';
+
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+}
+
+const geolocator = new geoLocationManager();
+geolocator.locate();
+
 const DEBOUCE = 2500;
 const msg = document.querySelector('#gateMsg');
 const btn = document.querySelector('#gateBtn');
@@ -7,7 +41,14 @@ const signMsg = document.querySelector('#signMsg');
 
 let id = null;
 btn.addEventListener('click', async () => {
-  fetch('/v1/gate/open')
+  fetch('/v1/gate/open', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(geolocator.coords)
+  })
     .then(async (res) => {
       msg.innerHTML = (await res.json()).message;
     })
@@ -49,27 +90,3 @@ signBtn.addEventListener('click', async () => {
 document.querySelector('#shotBtn').addEventListener('click', () => {
   fetch('/v1/gate/shot');
 });
-
-function geoFindMe() {
-  var output = document.getElementById('out');
-
-  if (!navigator.geolocation) {
-    output.innerHTML = '<p>La geolocalizzazione non è supportata dal tuo browser</p>';
-    return;
-  }
-
-  function success(position) {
-    var latitude  = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    output.innerHTML = '<p>Latitudine: ' + latitude + '° <br>Longitudine: ' + longitude + '°</p>';
-  }
-
-  function error() {
-    output.innerHTML = 'Impossibile calcolare la tua posizione';
-  }
-
-  output.innerHTML = '<p>Locating…</p>';
-
-  navigator.geolocation.getCurrentPosition(success, error);
-}
-geoFindMe();

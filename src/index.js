@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 const fs = require('fs');
 
@@ -6,11 +8,11 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
-const getShot = require('./get-shot');
 const gpio = require('onoff').Gpio;
 const app = express();
-const dotenv = require('dotenv');
-dotenv.config();
+
+const actionLog = require('./action-log');
+const getShot = require('./get-shot');
 
 const { checkTocken, signToken } = require('./jwt');
 
@@ -26,7 +28,7 @@ try {
   console.warn(err.message);
 }
 
-const open = (time) => {
+const ioGateOpen = (time) => {
   out18.writeSync(1);
   setTimeout(() => {
     out18.writeSync(0);
@@ -34,22 +36,25 @@ const open = (time) => {
   return 'ok';
 };
 
+const logging = (req, res, next) => {
+  console.log('url', req.url);
+  console.log('query', req.query);
+  console.log('params', req.params);
+  console.log('cookies', req.cookies);
+  console.log('body', req.body);
+
+  next();
+};
+
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(logging);
 app.use('/', express.static(path.join(__dirname, 'www'), { dotfiles: 'allow' }));
 
-app.use((req, res, next) => {
-  console.log(req.url);
-  console.log(req.params);
-  console.log(req.query);
-  console.log(req.body);
-  console.log(req.cookies);
-  next();
-});
-
+// Endpoints
 app.post('/v1/sign', (req, res, next) => {
   const { email, password } = req.body;
   if (process.env.JWT_EMAIL === email && process.env.JWT_PWD === password) {
@@ -78,14 +83,20 @@ app.get('/v1/gate/shot', checkTocken, async (req, res) => {
   }
 });
 
-app.get('/v1/gate/open', checkTocken, (req, res) => {
+app.post('/v1/gate/open', checkTocken, (req, res) => {
+  action = { type: 'GATE_OPEN', payload: req.body };
+  actionLog(action);
+
+  getShot()
+    .then(console.log)
+    .catch(console.error);
+
   try {
-    const result = open(2000);
-    res.status(200).send({ message: 'ok' });
+    const result = ioGateOpen(2000);
+    res.status(200).send({ message: result });
   } catch (err) {
     res.status(503).send({ message: 'retry later' });
   }
-  getShot().then(console.log).catch(console.error);
 });
 
 const https = require('https');
