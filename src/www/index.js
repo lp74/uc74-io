@@ -14,14 +14,16 @@ class geoLocationManager {
       return;
     }
 
-    function success(position) {
-      this.coords = position.coords;
-      output.innerHTML = '<p>Latitudine: ' + this.coords.latitude + '° <br>Longitudine: ' + this.coords.longitude + '°</p>';
-    }
+    const success = (position) => {
+      this.coords.latitude = position.coords.latitude;
+      this.coords.longitude = position.coords.longitude;
 
-    function error() {
+      output.innerHTML = '<p>Latitudine: ' + this.coords.latitude + '° <br>Longitudine: ' + this.coords.longitude + '°</p>';
+    };
+
+    const error = (err) => {
       output.innerHTML = 'Impossibile calcolare la tua posizione';
-    }
+    };
 
     output.innerHTML = '<p>Locating…</p>';
 
