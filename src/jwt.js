@@ -16,7 +16,7 @@ const checkTocken = (req, res, next) => {
   console.log('verifying token');
   const token = req.cookies.token;
   try {
-    jwt.verify(token, JWT_KEY);
+    req.user = jwt.verify(token, JWT_KEY);
     next();
   } catch (error) {
     res.status(401).send({ message: 'Unauthorized', payload: error }).end();

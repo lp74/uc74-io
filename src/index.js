@@ -84,7 +84,7 @@ app.get('/v1/gate/shot', checkTocken, async (req, res) => {
 });
 
 app.post('/v1/gate/open', checkTocken, (req, res) => {
-  action = { type: 'GATE_OPEN', payload: req.body };
+  action = { type: 'GATE_OPEN', payload: Object.assign({}, { ip: req.ip }, req.user, req.body) };
   actionLog(action);
 
   getShot()
