@@ -6,7 +6,7 @@ const defaultConf = [
   '--jpeg', '50',
   '--resolution', '960x540',
   '--rotate', '90',
-  '--save', '/home/pi/uc74-io/src/www/image.jpg'
+  '--save', `${process.env.SERVER_FOLDER}image.jpg`
 ];
 
 module.exports = function getShot(conf = defaultConf) {
