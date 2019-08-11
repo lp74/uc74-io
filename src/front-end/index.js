@@ -94,7 +94,8 @@ signBtn.addEventListener('click', async () => {
     });
 });
 
-document.querySelector('#shotBtn').addEventListener('click', () => {
-  fetch('/v1/gate/shot');
-});
+setInterval(function () {
+  const myImageElement = document.getElementById('myImage');
+  myImageElement.src = 'screen.jpg?rand=' + Math.random();
+}, 5000);
 
