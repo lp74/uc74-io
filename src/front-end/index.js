@@ -96,6 +96,6 @@ signBtn.addEventListener('click', async () => {
 
 setInterval(function () {
   const myImageElement = document.getElementById('myImage');
-  myImageElement.src = 'screen.jpg?rand=' + Math.random();
+  myImageElement.src = 'image.jpg?rand=' + Math.random();
 }, 5000);
 
