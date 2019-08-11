@@ -52,7 +52,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(logging);
-app.use('/', express.static(path.join(__dirname, 'www'), { dotfiles: 'allow' }));
+app.use('/', express.static(process.env.SERVER_FOLDER, { dotfiles: 'allow' }));
 
 // Endpoints
 app.post('/v1/sign', (req, res, next) => {
