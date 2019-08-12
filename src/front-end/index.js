@@ -93,3 +93,16 @@ signBtn.addEventListener('click', async () => {
       console.error('error', err);
     });
 });
+
+document.querySelector('#cameraBtn').addEventListener('click', () => {
+  fetch('v1/dns').then(response => response.text().then(addr =>
+  {
+    const camera = document.querySelector('#camera');
+    camera.setAttribute('src', `http://${addr}:8888`);
+    setTimeout(() => {
+      camera.removeAttribute('src');
+    }, 60 * 1000);
+  }
+  ));
+});
+

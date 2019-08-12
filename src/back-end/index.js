@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const path = require('path');
+const dns = require('dns');
 const fs = require('fs');
 
 const express = require('express');
@@ -12,7 +12,6 @@ const gpio = require('onoff').Gpio;
 const app = express();
 
 const actionLog = require('./action-log');
-const getShot = require('./get-shot');
 
 const { checkTocken, signToken } = require('./jwt');
 
@@ -67,20 +66,13 @@ app.post('/v1/sign', (req, res, next) => {
   }
 });
 
-app.get('/v1/gate/shot', checkTocken, async (req, res) => {
-  try {
-    const code = await getShot();
-    switch (code) {
-    case 0:
-      res.status(200).sendFile('/home/pi/uc74-io/src/www/image.jpg');
-      break;
-    default:
-      res.status(200).send(code.toString());
-      break;
+app.get('/v1/dns', (req, res) => {
+  dns.lookup('gate74.ddns.net', (err, address) => {
+    if (err) {
+      res.status(503).send(err);
     }
-  } catch (error) {
-    res.status(503).send(error);
-  }
+    res.status(200).send(address.toString());
+  });
 });
 
 app.post('/v1/gate/open', checkTocken, (req, res) => {
