@@ -93,9 +93,3 @@ signBtn.addEventListener('click', async () => {
       console.error('error', err);
     });
 });
-
-setInterval(function () {
-  const myImageElement = document.getElementById('myImage');
-  myImageElement.src = 'image.jpg?rand=' + Math.random();
-}, 5000);
-
