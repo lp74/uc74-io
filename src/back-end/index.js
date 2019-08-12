@@ -79,10 +79,6 @@ app.post('/v1/gate/open', checkTocken, (req, res) => {
   action = { type: 'GATE_OPEN', payload: Object.assign({}, { ip: req.ip }, req.user, req.body) };
   actionLog(action);
 
-  getShot()
-    .then(console.log)
-    .catch(console.error);
-
   try {
     const result = ioGateOpen(2000);
     res.status(200).send({ message: result });
